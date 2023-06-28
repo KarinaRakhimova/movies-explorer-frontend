@@ -6,22 +6,23 @@ import { checkSavedMoviesInLocalStorage } from "../../utils/utils";
 import { getSavedMovies } from "../../utils/MainApi";
 export default function Movies({
   movies,
+  setMovies,
   moviesToRender,
   setMoviesToRender,
-  setMovies,
   checkboxChecked,
   setCheckboxChecked,
   handleSearch,
   saveMovie,
   deleteMovie,
   setDuration,
-  values, errors, isValid, handleChange
+  values,
+  errors,
+  isValid,
+  handleChange,
 }) {
   const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
-  const amount = windowWidth >=1280 ? 16 : 8;
-  const step = windowWidth >=1280 ? 4 : 2;
-  // const [moviesToRender, setMoviesToRender] = React.useState([]);
-
+  const amount = windowWidth >= 1280 ? 16 : 8;
+  const step = windowWidth >= 1280 ? 4 : 2;
 
   React.useEffect(() => {
     const handleWindowResize = () => {
@@ -38,20 +39,24 @@ export default function Movies({
   React.useEffect(() => {
     // values.movie = JSON.parse(localStorage.getItem("userRequest")).movie || "";
     const cashedMovies = JSON.parse(localStorage.getItem("lastSearch")) || [];
-    setCheckboxChecked(JSON.parse(localStorage.getItem("shortMoviesFilterOn")) || false);
+    setCheckboxChecked(
+      JSON.parse(localStorage.getItem("shortMoviesFilterOn")) || false
+    );
     getSavedMovies()
-    .then(res => {
-      checkSavedMoviesInLocalStorage(cashedMovies, res);
-      setMovies(cashedMovies);
-      setMoviesToRender(cashedMovies.slice(0, amount))
-    })
-    .catch(err => console.log(err))
-
+      .then((res) => {
+        checkSavedMoviesInLocalStorage(cashedMovies, res);
+        setMovies(cashedMovies);
+        setMoviesToRender(cashedMovies.slice(0, amount));
+      })
+      .catch((err) => console.log(err));
   }, [windowWidth]);
 
   function handleClick() {
-    const start = moviesToRender.length
-    setMoviesToRender([...moviesToRender, ...movies.slice(start, start+step)])
+    const start = moviesToRender.length;
+    setMoviesToRender([
+      ...moviesToRender,
+      ...movies.slice(start, start + step),
+    ]);
   }
   const moviesList = moviesToRender.map((movie) => (
     <MoviesCard
@@ -62,7 +67,7 @@ export default function Movies({
       duration={setDuration(movie.duration)}
       saveMovie={saveMovie}
       deleteMovie={deleteMovie}
-      isLiked = {movie.isLiked || false}
+      isLiked={movie.isLiked || false}
     />
   ));
   return (
@@ -79,8 +84,12 @@ export default function Movies({
         setMoviesToRender={setMoviesToRender}
       />
       <ul className="movies__list">{moviesList}</ul>
-      <button type="button" className="movies__search button" onClick={handleClick}
-      hidden={(movies.length - moviesToRender.length ===0) ? true : false}>
+      <button
+        type="button"
+        className="movies__search button"
+        onClick={handleClick}
+        hidden={movies.length - moviesToRender.length === 0 ? true : false}
+      >
         Еще
       </button>
     </section>

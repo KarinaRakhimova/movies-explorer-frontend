@@ -10,13 +10,15 @@ export default function SavedMovies({
   setCheckboxChecked,
   setDuration,
   deleteMovie,
-  values, errors, isValid, handleChange,setMoviesToRender
+  values,
+  errors,
+  isValid,
+  handleChange,
+  setMoviesToRender,
 }) {
   React.useEffect(() => {
     getSavedMovies()
       .then((res) => {
-
-          console.log(res);
         setSavedMovies(res);
       })
       .catch((err) => console.log(err));
