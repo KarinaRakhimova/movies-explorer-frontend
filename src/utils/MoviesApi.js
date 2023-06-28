@@ -8,7 +8,6 @@ const moviesApi = (url, method, body) => {
   const config = {
     method,
     headers,
-    credentials: 'include',
   }
   if (body !== undefined) {
     config.body = JSON.stringify(body)
