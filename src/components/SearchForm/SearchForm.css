@@ -90,3 +90,11 @@
     line-height: 22px;
   }
 }
+
+.error {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  bottom: 75px;
+  color: #FF004D;
+}

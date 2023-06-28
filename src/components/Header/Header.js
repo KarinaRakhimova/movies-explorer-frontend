@@ -3,7 +3,7 @@ import React from "react";
 import headerLogo from "../../images/headerLogo.svg";
 import { Link, useLocation } from "react-router-dom";
 import Navigation from "../Navigation/Navigation";
-function Header() {
+function Header({loggedIn}) {
   const location = useLocation();
   return (
     <header
@@ -18,7 +18,7 @@ function Header() {
       <Link to="/" className="header__logo link">
         <img src={headerLogo} alt="логотип" />
       </Link>
-      <Navigation />
+      <Navigation loggedIn={loggedIn}/>
     </header>
   );
 }

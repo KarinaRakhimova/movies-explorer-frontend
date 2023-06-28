@@ -1,15 +1,23 @@
 import { useLocation, Link } from "react-router-dom";
 import Menu from "../Menu/Menu";
-export default function Navigation(isActive) {
+export default function Navigation({ loggedIn }) {
   const location = useLocation();
-  const navElements = () => {
+  const nav = (loggedIn) => {
     if (location.pathname === "/") {
-      return (
+      return loggedIn ? (
+        <Menu />
+      ) : (
         <nav className="header__container">
-          <Link to="/signup" className="header__link header__link_type_signup link">
+          <Link
+            to="/signup"
+            className="header__link header__link_type_signup link"
+          >
             Регистрация
           </Link>
-          <Link to="/signin" className="header__link header__link_type_signin link">
+          <Link
+            to="/signin"
+            className="header__link header__link_type_signin link"
+          >
             Войти
           </Link>
         </nav>
@@ -19,12 +27,9 @@ export default function Navigation(isActive) {
       location.pathname === "/profile" ||
       location.pathname === "/saved-movies"
     ) {
-      return (
-        <Menu/>
-      );
+      return <Menu />;
     }
     return null;
   };
-
-  return navElements();
+  return nav(loggedIn);
 }
