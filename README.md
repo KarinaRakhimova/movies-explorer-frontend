@@ -1,4 +1,4 @@
 #
-Второй этап дипломного проекта - верстка и JSX
-## Ссылка на макет:
-https://disk.yandex.ru/d/vwstpTDeNkVmjg
+Третий этап дипломного проекта - верстка и JSX
+## Ссылка на пулл-реквест:
+https://github.com/KarinaRakhimova/movies-explorer-frontend/pull/2
