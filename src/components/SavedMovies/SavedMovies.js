@@ -1,7 +1,7 @@
 import SearchForm from "../SearchForm/SearchForm";
 import MoviesCard from "../MoviesCard/MoviesCard";
 import React from "react";
-import { getSavedMovies } from "../../utils/MainApi";
+import { filterByDuration } from "../../utils/utils";
 export default function SavedMovies({
   handleSearch,
   savedMovies,
@@ -11,20 +11,18 @@ export default function SavedMovies({
   setDuration,
   deleteMovie,
   values,
-  errors,
+  setValues,
   isValid,
   handleChange,
-  setMoviesToRender,
+  savedMoviesToRender,
+  setSavedMoviesToRender,
 }) {
   React.useEffect(() => {
-    getSavedMovies()
-      .then((res) => {
-        setSavedMovies(res);
-      })
-      .catch((err) => console.log(err));
-  }, []);
+    checkboxChecked ?
+    setSavedMoviesToRender(savedMovies.filter((item => filterByDuration(item)))) : setSavedMoviesToRender(savedMovies);
+  }, [savedMovies, isValid, checkboxChecked]);
 
-  const moviesList = savedMovies.map((movie) => (
+  const moviesList = savedMoviesToRender.map((movie) => (
     <MoviesCard
       key={movie.movieId}
       movie={movie}
@@ -41,12 +39,12 @@ export default function SavedMovies({
         checkboxChecked={checkboxChecked}
         setCheckboxChecked={setCheckboxChecked}
         values={values}
-        errors={errors}
+        setValues={setValues}
         isValid={isValid}
         handleChange={handleChange}
-        movies={savedMovies}
+        movies={savedMoviesToRender}
         setSavedMovies={setSavedMovies}
-        setMoviesToRender={setMoviesToRender}
+        setSavedMoviesToRender={setSavedMoviesToRender}
       />
       <ul className="movies__list">{moviesList}</ul>
     </section>
