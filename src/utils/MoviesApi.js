@@ -1,4 +1,4 @@
-export const BASE_URL = 'https://api.nomoreparties.co';
+import {BASE_URL_MOVIE_SERVER} from '../utils/constants';
 const checkResponse = (res) => res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`)
 
 const moviesApi = (url, method, body) => {
@@ -12,7 +12,7 @@ const moviesApi = (url, method, body) => {
   if (body !== undefined) {
     config.body = JSON.stringify(body)
   }
-  return fetch(`${BASE_URL}${url}`, config).then(checkResponse);
+  return fetch(`${BASE_URL_MOVIE_SERVER}${url}`, config).then(checkResponse);
 }
 
 export const getMovies = () => {

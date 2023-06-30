@@ -1,5 +1,4 @@
-export const BASE_URL = 'https://api.krr-diploma.nomoredomains.rocks/';
-// export const BASE_URL = 'http://localhost:3000/'
+import { BASE_URL_MY_SERVER } from "../utils/constants";
 const checkResponse = (res) => res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`)
 export const mainApi = (url, method, body) => {
   const headers = {
@@ -13,7 +12,7 @@ export const mainApi = (url, method, body) => {
   if (body !== undefined) {
     config.body = JSON.stringify(body)
   }
-  return fetch(`${BASE_URL}${url}`, config).then(checkResponse)
+  return fetch(`${BASE_URL_MY_SERVER}${url}`, config).then(checkResponse)
 }
 export const register = (userInfo) => {
   return mainApi('signup', 'POST', userInfo)
