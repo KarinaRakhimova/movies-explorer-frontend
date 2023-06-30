@@ -2,16 +2,15 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import './FilterCheckbox.css';
 import { filterByDuration } from '../../utils/utils';
-export default function FilterCheckbox({checkboxChecked, setCheckboxChecked, movies, setSavedMovies, setMoviesToRender}) {
+export default function FilterCheckbox({checkboxChecked, setCheckboxChecked, movies, setMoviesToRender, setSavedMoviesToRender}) {
   const location = useLocation();
-  const filterOn = React.useRef(checkboxChecked)
 
   function handleClick() {
     setCheckboxChecked(checkboxChecked => !checkboxChecked);
-      const result = filterOn
+      const result = checkboxChecked
       ? movies.filter(item => filterByDuration(item))
       : movies;
-    location.pathname === '/movies' ? setMoviesToRender(result) : setSavedMovies(result)
+    location.pathname === '/movies' ? setMoviesToRender(result) : setSavedMoviesToRender(result)
   }
 
   return(
