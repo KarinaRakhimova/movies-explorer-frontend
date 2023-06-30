@@ -26,8 +26,6 @@ export default function Login({ onLogin }) {
         type="email"
         name="email"
         required
-        minLength="2"
-        maxLength="30"
         value={values.email || ""}
         onChange={handleChange}
       />

@@ -1,7 +1,5 @@
 import Form from "../Form/Form";
-import React from "react";
 import useValidation from "../../hooks/useValidation";
-
 export default function Register({onRegister}) {
   const { values, errors, isValid, handleChange } = useValidation({});
 
