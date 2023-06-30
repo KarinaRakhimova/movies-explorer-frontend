@@ -12,11 +12,7 @@ function InfoPopup({ isOpen, onClose, reqStatus, message }) {
           src={reqStatus ? reqSuccess : reqFail}
           alt={""}
         />
-        <figcaption className="popup__reqResult-caption">{message}
-          {/* {reqStatus
-            ? message
-            : "Что-то пошло не так!Попробуйте ещё раз."} */}
-        </figcaption>
+        <figcaption className="popup__reqResult-caption">{message || ""}</figcaption>
         <button
           className="popup__close"
           aria-label="закрыть"
