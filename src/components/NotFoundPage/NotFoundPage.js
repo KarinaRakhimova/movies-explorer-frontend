@@ -3,12 +3,9 @@ export default function NotFoundPage() {
   const navigate = useNavigate();
 
   function goBack() {
-    if (window.history.state && window.history.state.idx > 0) {
       navigate(-1);
-    } else {
-      navigate("/movies", { replace: true });
-    }
   }
+
   return (
     <div className="notFoundPage">
       <p className="notFoundPage__code">404</p>
