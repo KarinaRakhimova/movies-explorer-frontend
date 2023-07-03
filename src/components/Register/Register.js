@@ -1,6 +1,7 @@
+import { Navigate } from "react-router-dom";
 import Form from "../Form/Form";
 import useValidation from "../../hooks/useValidation";
-export default function Register({onRegister}) {
+export default function Register({onRegister, loggedIn}) {
   const { values, errors, isValid, handleChange } = useValidation({});
 
   function handleSubmit(evt) {
@@ -8,7 +9,7 @@ export default function Register({onRegister}) {
     onRegister(values)
   }
 
-  return (
+  return loggedIn ? <Navigate to="/" replace/> :(
     <Form
       name="regForm"
       title="Добро пожаловать!"
