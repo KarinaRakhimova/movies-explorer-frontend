@@ -1,13 +1,16 @@
+import { Navigate } from "react-router-dom";
 import Form from "../Form/Form";
 import useValidation from "../../hooks/useValidation";
-export default function Login({ onLogin }) {
+export default function Login({ onLogin, loggedIn }) {
   const { values, errors, isValid, handleChange } = useValidation({});
 
   function handleSubmit(evt) {
     evt.preventDefault();
-    onLogin(values)
+    onLogin(values);
   }
-  return (
+  return loggedIn ? (
+    <Navigate to="/" replace/>
+  ) : (
     <Form
       name="loginForm"
       title="Рады видеть!"
