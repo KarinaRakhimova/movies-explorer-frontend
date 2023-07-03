@@ -10,7 +10,7 @@ export default function MoviesCard({
   deleteMovie,
 }) {
   const location = useLocation();
-  const [isLiked, setIsLiked] = React.useState(movie.isLiked);
+  const [isLiked, setIsLiked] = React.useState(movie.isLiked || false);
 
   function handleLikeClick() {
     setIsLiked(true);

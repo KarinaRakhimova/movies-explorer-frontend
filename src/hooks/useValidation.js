@@ -2,7 +2,6 @@ import { useState } from "react";
 import { isEmail } from "validator";
 
 export default function useValidation() {
-
   const [values, setValues] = useState({});
   const [errors, setErrors] = useState({});
   const [isValid, setIsValid] = useState(false);
@@ -18,5 +17,5 @@ export default function useValidation() {
     setErrors({ ...errors, [name]: evt.target.validationMessage });
     setIsValid(evt.target.closest("form").checkValidity());
   }
-  return { values, setValues, errors, isValid, handleChange };
+  return { values, setValues, errors, isValid, setIsValid, handleChange };
 }

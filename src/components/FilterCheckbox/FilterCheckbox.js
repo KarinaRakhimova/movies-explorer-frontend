@@ -1,23 +1,31 @@
-import React from 'react';
-import { useLocation } from 'react-router-dom';
-import './FilterCheckbox.css';
-import { filterByDuration } from '../../utils/utils';
-export default function FilterCheckbox({checkboxChecked, setCheckboxChecked, movies, setMoviesToRender, setSavedMoviesToRender}) {
+import React from "react";
+import { useLocation } from "react-router-dom";
+import "./FilterCheckbox.css";
+export default function FilterCheckbox({
+  checkboxChecked,
+  setCheckboxChecked,
+}) {
   const location = useLocation();
 
+  React.useEffect(() => {
+    if (location.pathname === "/saved-movies") {
+      setCheckboxChecked(false);
+    } else {
+      setCheckboxChecked(
+        JSON.parse(localStorage.getItem("shortFilterOn")) || false
+      );
+    }
+  }, []);
+
   function handleClick() {
-    setCheckboxChecked(checkboxChecked => !checkboxChecked);
-      const result = checkboxChecked
-      ? movies.filter(item => filterByDuration(item))
-      : movies;
-    location.pathname === '/movies' ? setMoviesToRender(result) : setSavedMoviesToRender(result)
+    setCheckboxChecked((checkboxChecked) => !checkboxChecked);
   }
 
-  return(
+  return (
     <label className="searchForm__checkbox">
-      <input type="checkbox" onChange={handleClick} checked={checkboxChecked}/>
+      <input type="checkbox" onChange={handleClick} checked={checkboxChecked} />
       <span className="tumbler"></span>
       Короткометражки
     </label>
-  )
+  );
 }

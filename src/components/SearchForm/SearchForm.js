@@ -1,27 +1,32 @@
 import React from "react";
+import { useLocation } from "react-router-dom";
 import searchFormIcon from "../../images/searchFormIcon.svg";
 import FilterCheckbox from "../FilterCheckbox/FilterCheckbox";
 export default function SearchForm({
   onSubmit,
   checkboxChecked,
-  setCheckboxChecked, values, setValues, handleChange,
-  movies, setSavedMoviesToRender, setMoviesToRender
+  setCheckboxChecked,
+  values, setValues, handleChange,
+  movies,
 }) {
-
+  const location = useLocation();
   React.useEffect(() => {
-    if (JSON.parse(localStorage.getItem("userRequest"))) {
-      setValues({ movie: JSON.parse(localStorage.getItem("userRequest")).movie})
+    if (location.pathname === '/saved-movies') {
+      setValues({movie: ""})
     } else {
-      setValues({movie: values.movie})
+      if (JSON.parse(localStorage.getItem("userRequest"))) {
+        setValues({ movie: JSON.parse(localStorage.getItem("userRequest")).movie})
+      } else {
+        setValues({movie: values.movie})
+      }
     }
   }, []);
-
-
 
   function handleSubmit(evt) {
     evt.preventDefault();
     onSubmit(values);
   }
+
   return (
     <form
       name="searchForm"
@@ -53,8 +58,6 @@ export default function SearchForm({
         checkboxChecked={checkboxChecked}
         setCheckboxChecked={setCheckboxChecked}
         movies={movies}
-        setSavedMoviesToRender={setSavedMoviesToRender}
-        setMoviesToRender={setMoviesToRender}
       />
     </form>
   );
