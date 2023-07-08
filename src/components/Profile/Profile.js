@@ -10,7 +10,7 @@ export default function Profile({ onUpdateUser, reqStatus, onSignout }) {
 
   React.useEffect(() => {
     setValues({ name: currentUser.name, email: currentUser.email });
-  }, [currentUser]);
+  }, [currentUser, reqStatus]);
 
   React.useEffect(() => {
     setNewData(

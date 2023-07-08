@@ -9,7 +9,7 @@ export default function Register({onRegister, loggedIn}) {
     onRegister(values)
   }
 
-  return loggedIn ? <Navigate to="/" replace/> :(
+  return loggedIn ? <Navigate to="/movies" replace/> :(
     <Form
       name="regForm"
       title="Добро пожаловать!"

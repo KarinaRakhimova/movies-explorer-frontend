@@ -9,7 +9,7 @@ export default function Login({ onLogin, loggedIn }) {
     onLogin(values);
   }
   return loggedIn ? (
-    <Navigate to="/" replace/>
+    <Navigate to="/movies" replace/>
   ) : (
     <Form
       name="loginForm"
