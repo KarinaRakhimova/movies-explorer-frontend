@@ -62,7 +62,12 @@ export default function Menu() {
             className="menu__closeButton"
             onClick={handleBurgerClose}
           />
-          <NavLink to="/" className="menu__link menu__link_type_main link">
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              `menu__link ${isActive ? "menu__link_active" : ""} link`
+            }
+          >
             Главная
           </NavLink>
           <NavLink

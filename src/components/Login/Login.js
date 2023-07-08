@@ -37,7 +37,7 @@ export default function Login({ onLogin, loggedIn }) {
         Пароль
       </label>
       <input
-        className="form__input form__input_field_password"
+        className={`${errors.password ? "form__input form__input_field_password" : "form__input"}`}
         type="password"
         name="password"
         required
