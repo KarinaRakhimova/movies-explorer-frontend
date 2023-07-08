@@ -93,7 +93,7 @@ function App() {
   }
 
   // проверка токена
-  const checkToken = useCallback(() => {
+  const checkToken = () =>  {
     mainApi
       .getToken()
       .then((res) => {
@@ -102,8 +102,8 @@ function App() {
           setCurrentUser(res);
         }
       })
-      .catch((err) => console.log(err));
-  }, []);
+      .catch((err) => console.log(err))
+  };
 
   // выход из учетной записи
   function handleSignout() {
@@ -153,7 +153,7 @@ function App() {
 
   React.useEffect(() => {
     checkToken();
-  }, [loggedIn, checkToken]);
+  }, [loggedIn]);
 
   function saveMovie(movie) {
     mainApi
