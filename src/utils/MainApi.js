@@ -1,5 +1,6 @@
 import { BASE_URL_MY_SERVER } from "../utils/constants";
-const checkResponse = (res) => res.ok ? res.json() : res.json().then(res =>Promise.reject(res));
+const checkResponse = (res) => res.ok ? res.json() :  Promise.reject(`${res.status}`)
+
 export const mainApi = (url, method, body) => {
   const headers = {
     "Content-Type": "application/json"

@@ -1,5 +1,5 @@
-import React, { useCallback } from "react";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import React from "react";
+import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 // import components
 import Header from "../Header/Header";
 import Main from "../Main/Main";
@@ -21,7 +21,27 @@ import { BASE_URL_MOVIE_SERVER } from "../../utils/constants";
 import * as mainApi from "../../utils/MainApi";
 
 function App() {
+  function checkResStatus(resStatus) {
+    switch (resStatus) {
+      case "401":
+        setMessage("Вы ввели неправильный логин или пароль");
+        break;
+      case "403":
+        setMessage("У вас нет доступа");
+        break;
+      case "409":
+        setMessage("Пользователь с таким email уже существует");
+        break;
+      case "404":
+        setMessage("404 Страница по указанному маршруту не найдена");
+        break;
+      default:
+        setMessage("500 На сервере произошла ошибка");
+    }
+  }
+
   const navigate = useNavigate();
+  const location = useLocation();
   // состояние прелоадера
   const [isLoading, setIsLoading] = React.useState(false);
   // состояние инфопопапа
@@ -49,8 +69,10 @@ function App() {
         navigate("/movies", { replace: true });
       })
       .catch((err) => {
+        console.log(err);
+        checkResStatus(err);
+        setLoggedIn(false);
         setReqStatus(false);
-        setMessage(`${err.message}`);
         setIsOpen(true);
       });
   }
@@ -67,8 +89,10 @@ function App() {
         }
       })
       .catch((err) => {
+        console.log(err);
+        checkResStatus(err);
+        setLoggedIn(false);
         setReqStatus(false);
-        setMessage(`${err.message}`);
         setIsOpen(true);
       });
   }
@@ -86,23 +110,26 @@ function App() {
         }
       })
       .catch((err) => {
+        console.log(err);
+        checkResStatus(err);
+        setLoggedIn(false);
         setReqStatus(false);
-        setMessage(`${err.message}`);
         setIsOpen(true);
       });
   }
 
   // проверка токена
-  const checkToken = () =>  {
+  const checkToken = () => {
     mainApi
       .getToken()
       .then((res) => {
         if (res) {
           setLoggedIn(true);
           setCurrentUser(res);
+          navigate(location.pathname, { replace: true });
         }
       })
-      .catch((err) => console.log(err))
+      .catch((err) => console.log(err));
   };
 
   // выход из учетной записи
@@ -119,11 +146,7 @@ function App() {
           setIsOpen(true);
         }
       })
-      .catch((err) => {
-        setReqStatus(false);
-        setMessage(`${err.message}`);
-        setIsOpen(true);
-      });
+      .catch((err) => console.log(err));
   }
   // закрыть инфопопап
   function closePopup() {
@@ -144,8 +167,10 @@ function App() {
           );
         })
         .catch((err) => {
+          console.log(err);
+          checkResStatus(err);
+          setLoggedIn(false);
           setReqStatus(false);
-          setMessage(`${err.message}`);
           setIsOpen(true);
         });
     }
@@ -171,8 +196,10 @@ function App() {
         );
       })
       .catch((err) => {
+        console.log(err);
+        checkResStatus(err);
+        setLoggedIn(false);
         setReqStatus(false);
-        setMessage(`${err.message}`);
         setIsOpen(true);
       });
   }
@@ -191,8 +218,10 @@ function App() {
         setIsOpen(true);
       })
       .catch((err) => {
+        console.log(err);
+        checkResStatus(err);
+        setLoggedIn(false);
         setReqStatus(false);
-        setMessage(`${err.message}`);
         setIsOpen(true);
       });
   }
@@ -215,7 +244,7 @@ function App() {
             path="/movies"
             element={
               <>
-                <Header />
+                <Header loggedIn={loggedIn} />
                 <ProtectedRoute
                   element={Movies}
                   loggedIn={loggedIn}
@@ -235,7 +264,7 @@ function App() {
             path="/saved-movies"
             element={
               <>
-                <Header />
+                <Header loggedIn={loggedIn} />
                 <ProtectedRoute
                   element={SavedMovies}
                   loggedIn={loggedIn}
@@ -255,7 +284,7 @@ function App() {
             path="/profile"
             element={
               <>
-                <Header />
+                <Header loggedIn={loggedIn} />
                 <ProtectedRoute
                   element={Profile}
                   loggedIn={loggedIn}
@@ -270,7 +299,7 @@ function App() {
             path="/signin"
             element={
               <>
-                <Header />
+                <Header loggedIn={loggedIn} />
                 <Login onLogin={handleLogin} loggedIn={loggedIn} />
               </>
             }
@@ -279,7 +308,7 @@ function App() {
             path="/signup"
             element={
               <>
-                <Header />
+                <Header loggedIn={loggedIn} />
                 <Register onRegister={handleRegister} loggedIn={loggedIn} />
               </>
             }
