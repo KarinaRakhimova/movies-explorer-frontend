@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 // import components
 import Header from "../Header/Header";
 import Main from "../Main/Main";
@@ -17,19 +17,11 @@ import PreloaderPopup from "../PreloaderPopup";
 import { CurrentUserContext } from "../../contexts/CurrentUserContext";
 // constants
 import { BASE_URL_MOVIE_SERVER } from "../../utils/constants";
-// custom hook
-import useValidation from "../../hooks/useValidation";
 // functions
 import * as mainApi from "../../utils/MainApi";
-import { getMovies } from "../../utils/MoviesApi";
-import { filterByDuration, filterByUserRequest } from "../../utils/utils";
 
 function App() {
   const navigate = useNavigate();
-  const location = useLocation();
-  // валидация форм
-  const { values, setValues, errors, isValid, setIsValid, handleChange } =
-    useValidation({});
   // состояние прелоадера
   const [isLoading, setIsLoading] = React.useState(false);
   // состояние инфопопапа
@@ -40,14 +32,8 @@ function App() {
   const [loggedIn, setLoggedIn] = React.useState(false);
   // статус запроса на api - успешен или нет
   const [reqStatus, setReqStatus] = React.useState(true);
-  // фильмы/сохраненные фильмы/для отрисовки частями
-  const [movies, setMovies] = React.useState([]);
+  // сохраненные фильмы
   const [savedMovies, setSavedMovies] = React.useState([]);
-  const [savedMoviesToRender, setSavedMoviesToRender] = React.useState([]);
-  //состояние фильтра короткометражек
-  const [checkboxChecked, setCheckboxChecked] = React.useState(
-    JSON.parse(localStorage.getItem("shortMoviesFilterOn")) || false
-  );
   // сообщение, которое попадает в инфопопап
   const [message, setMessage] = React.useState("");
 
@@ -64,7 +50,7 @@ function App() {
       })
       .catch((err) => {
         setReqStatus(false);
-        setMessage("Что-то пошло не так!Попробуйте ещё раз.");
+        setMessage(`${err.message}`);
         setIsOpen(true);
       });
   }
@@ -79,9 +65,12 @@ function App() {
           setCurrentUser(res);
           navigate("/movies", { replace: true });
         }
-        return;
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        setReqStatus(false);
+        setMessage(`${err.message}`);
+        setIsOpen(true);
+      });
   }
 
   // обновление данных пользователя
@@ -95,10 +84,11 @@ function App() {
           setMessage("Данные успешно обновлены");
           setIsOpen(true);
         }
-        return;
       })
       .catch((err) => {
-        console.log(err);
+        setReqStatus(false);
+        setMessage(`${err.message}`);
+        setIsOpen(true);
       });
   }
 
@@ -110,7 +100,6 @@ function App() {
         if (res) {
           setLoggedIn(true);
           setCurrentUser(res);
-          navigate(location.pathname, { replace: true });
         }
       })
       .catch((err) => console.log(err));
@@ -130,12 +119,17 @@ function App() {
           setIsOpen(true);
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        setReqStatus(false);
+        setMessage(`${err.message}`);
+        setIsOpen(true);
+      });
   }
   // закрыть инфопопап
   function closePopup() {
     setIsOpen(false);
     setMessage("");
+    setReqStatus(true);
   }
 
   React.useEffect(() => {
@@ -149,122 +143,17 @@ function App() {
             JSON.stringify(savedMoviesList)
           );
         })
-        .catch((err) => console.log(`Ошибка ${err}`));
+        .catch((err) => {
+          setReqStatus(false);
+          setMessage(`${err.message}`);
+          setIsOpen(true);
+        });
     }
   }, [loggedIn]);
 
   React.useEffect(() => {
     checkToken();
   }, [loggedIn, checkToken]);
-
-  React.useEffect(() => {
-    if (localStorage.getItem("userRequest")) {
-      setIsValid(true);
-    }
-  }, []);
-
-  function handleSearch(userRequest) {
-    if (!isValid) {
-      setMessage("Нужно ввести ключевое слово");
-      setReqStatus(false);
-      setIsOpen(true);
-      return;
-    }
-    localStorage.setItem("userRequest", JSON.stringify(userRequest));
-    localStorage.setItem("shortFilterOn", JSON.stringify(checkboxChecked));
-    setIsLoading(true);
-    let filteredMovies;
-    if (localStorage.getItem("serverMovies")) {
-      const cashedMovies = JSON.parse(localStorage.getItem("serverMovies"));
-      filteredMovies = checkboxChecked
-        ? cashedMovies
-            .filter((item) => filterByDuration(item))
-            .filter((item) => filterByUserRequest(userRequest, item))
-        : cashedMovies.filter((item) => filterByUserRequest(userRequest, item));
-      // ничего не найдено
-      if (filteredMovies.length === 0) {
-        setIsOpen(true);
-        setReqStatus(false);
-        setMessage("Ничего не найдено");
-      }
-      localStorage.setItem("searchResult", JSON.stringify(filteredMovies));
-      setMovies(filteredMovies);
-      setIsLoading(false);
-    } else {
-      getMovies()
-        .then((res) => {
-          localStorage.setItem("serverMovies", JSON.stringify(res));
-          filteredMovies = checkboxChecked
-            ? res
-                .filter((item) => filterByDuration(item))
-                .filter((item) => filterByUserRequest(userRequest, item))
-            : res.filter((item) => filterByUserRequest(userRequest, item));
-          if (filteredMovies.length === 0) {
-            setIsOpen(true);
-            setReqStatus(false);
-            setMessage("Ничего не найдено");
-          }
-          localStorage.setItem("searchResult", JSON.stringify(filteredMovies));
-          setMovies(filteredMovies);
-        })
-        .catch((err) => {
-          setReqStatus(false);
-          setMessage(
-            "Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз"
-          );
-          setIsOpen(true);
-          console.log(err);
-        })
-        .finally(() => setIsLoading(false));
-    }
-  }
-
-  function handleSearchInSavedMovies(userRequest) {
-    setIsLoading(true);
-    let filteredMovies;
-    if (localStorage.getItem("savedMoviesList")) {
-      const cashedMovies = JSON.parse(localStorage.getItem("savedMoviesList"));
-      filteredMovies = checkboxChecked
-        ? cashedMovies
-            .filter((item) => filterByDuration(item))
-            .filter((item) => filterByUserRequest(userRequest, item))
-        : cashedMovies.filter((item) => filterByUserRequest(userRequest, item));
-      // ничего не найдено
-      if (filteredMovies.length === 0) {
-        setIsOpen(true);
-        setReqStatus(false);
-        setMessage("Ничего не найдено");
-      }
-      setSavedMoviesToRender(filteredMovies);
-      setIsLoading(false);
-    } else {
-      mainApi
-        .getSavedMovies()
-        .then((res) => {
-          localStorage.setItem("savedMoviesList", JSON.stringify(res));
-          filteredMovies = checkboxChecked
-            ? res
-                .filter((item) => filterByDuration(item))
-                .filter((item) => filterByUserRequest(userRequest, item))
-            : res.filter((item) => filterByUserRequest(userRequest, item));
-          if (filteredMovies.length === 0) {
-            setIsOpen(true);
-            setReqStatus(false);
-            setMessage("Ничего не найдено");
-          }
-          setSavedMoviesToRender(filteredMovies);
-        })
-        .catch((err) => {
-          setReqStatus(false);
-          setMessage(
-            "Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз"
-          );
-          setIsOpen(true);
-          console.log(err);
-        })
-        .finally(() => setIsLoading(false));
-    }
-  }
 
   function saveMovie(movie) {
     mainApi
@@ -281,7 +170,11 @@ function App() {
           JSON.stringify([res, ...savedMovies])
         );
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        setReqStatus(false);
+        setMessage(`${err.message}`);
+        setIsOpen(true);
+      });
   }
 
   function deleteMovie(movie) {
@@ -297,7 +190,11 @@ function App() {
         setReqStatus(true);
         setIsOpen(true);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        setReqStatus(false);
+        setMessage(`${err.message}`);
+        setIsOpen(true);
+      });
   }
 
   return (
@@ -322,19 +219,13 @@ function App() {
                 <ProtectedRoute
                   element={Movies}
                   loggedIn={loggedIn}
-                  movies={movies}
-                  setMovies={setMovies}
-                  savedMovies={savedMovies}
-                  checkboxChecked={checkboxChecked}
-                  setCheckboxChecked={setCheckboxChecked}
-                  handleSearch={handleSearch}
+                  setIsLoading={setIsLoading}
                   saveMovie={saveMovie}
                   deleteMovie={deleteMovie}
-                  values={values}
-                  setValues={setValues}
-                  errors={errors}
-                  isValid={isValid}
-                  handleChange={handleChange}
+                  savedMovies={savedMovies}
+                  setReqStatus={setReqStatus}
+                  setMessage={setMessage}
+                  setIsOpen={setIsOpen}
                 />
                 <Footer />
               </>
@@ -349,16 +240,12 @@ function App() {
                   element={SavedMovies}
                   loggedIn={loggedIn}
                   savedMovies={savedMovies}
-                  savedMoviesToRender={savedMoviesToRender}
-                  setSavedMoviesToRender={setSavedMoviesToRender}
-                  handleSearch={handleSearchInSavedMovies}
+                  setSavedMovies={setSavedMovies}
                   deleteMovie={deleteMovie}
-                  values={values}
-                  setValues={setValues}
-                  isValid={isValid}
-                  handleChange={handleChange}
-                  checkboxChecked={checkboxChecked}
-                  setCheckboxChecked={setCheckboxChecked}
+                  setIsLoading={setIsLoading}
+                  setReqStatus={setReqStatus}
+                  setMessage={setMessage}
+                  setIsOpen={setIsOpen}
                 />
                 <Footer />
               </>

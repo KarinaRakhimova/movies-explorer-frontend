@@ -10,15 +10,14 @@ export default function MoviesCard({
   deleteMovie,
 }) {
   const location = useLocation();
-  const [isLiked, setIsLiked] = React.useState(movie.isLiked || false);
 
   function handleLikeClick() {
-    setIsLiked(true);
+    movie.isLiked = true;
     saveMovie(movie);
   }
 
   function handleDislikeClick() {
-    setIsLiked(false);
+    movie.isLiked = false;
     deleteMovie(movie);
   }
 
@@ -33,12 +32,12 @@ export default function MoviesCard({
           {location.pathname === "/movies" ? (
             <button
               className={`card__like button ${
-                isLiked ? "card__like_active" : ""
+                movie.isLiked ? "card__like_active" : ""
               }`}
               aria-label="лайк"
               type="button"
               onClick={
-                isLiked
+                movie.isLiked
                   ? () => handleDislikeClick(movie)
                   : () => handleLikeClick(movie)
               }
